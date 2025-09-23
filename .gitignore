@@ -1,0 +1,7 @@
+﻿node_modules
+dist
+.env
+.env.local
+Frontend/my-react-app/node_modules
+Frontend/my-react-app/dist
+Backend/node_modules
