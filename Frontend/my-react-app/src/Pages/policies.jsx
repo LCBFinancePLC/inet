@@ -7,6 +7,9 @@ import { pdfjs } from 'react-pdf';
 import CategoryCard from '../Components/pdfCard';
 import { useNavigate } from 'react-router-dom';
 
+// ✅ FIXED: Set PDF.js worker for production
+pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
+
 const Policies = () => {
   const [categories, setCategories] = useState([]);
   const [pdfs, setPdfs] = useState([]);
@@ -20,8 +23,8 @@ const Policies = () => {
       try {
         // Fetch categories and PDFs in parallel
         const [categoriesResponse, pdfsResponse] = await Promise.all([
-          axios.get('http://10.10.1.80:5000/api/categories'),
-          axios.get('http://10.10.1.80:5000/api/pdfs')
+          axios.get('https://intanet-b.onrender.com/api/categories'),
+          axios.get('https://intanet-b.onrender.com/api/pdfs')
         ]);
 
         const filteredPdfs = pdfsResponse.data.filter(
@@ -48,12 +51,6 @@ const Policies = () => {
 
     fetchData();
   }, []);
-
-  // Configure PDF.js worker
-  pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-    "pdfjs-dist/build/pdf.worker.min.js",
-    import.meta.url
-  ).toString();
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
