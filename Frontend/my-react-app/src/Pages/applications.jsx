@@ -14,8 +14,8 @@ const Applications = () => {
       try {
         // Fetch categories and PDFs in parallel
         const [categoriesResponse, pdfsResponse] = await Promise.all([
-          axios.get('http://10.10.1.80:5000/api/categories'),
-          axios.get('http://10.10.1.80:5000/api/pdfs')
+          axios.get('https://intanet-b.onrender.com/api/categories'),
+          axios.get('https://intanet-b.onrender.com/api/pdfs')
         ]);
 
         const filteredPdfs = pdfsResponse.data.filter(
@@ -49,7 +49,7 @@ const Applications = () => {
   };
 
   const handlePdfClick = (filePath) => {
-    const fullPath = `http://10.10.1.80:5000/${filePath}`;
+    const fullPath = `https://intanet-b.onrender.com/${filePath}`;
     window.open(fullPath, '_blank');
   };
 
