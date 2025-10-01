@@ -2,19 +2,18 @@
   "name": "backend",
   "version": "1.0.0",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
-  },
-  "keywords": [],
+  "description": "",
   "author": "",
   "license": "ISC",
-  "description": "",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"no tests\" && exit 0",
+    "build:frontend": "npm ci --prefix ../Frontend/my-react-app && npm run build --prefix ../Frontend/my-react-app"
+  },
+  "engines": { "node": "20.x" },
   "dependencies": {
     "axios": "^1.7.7",
-    "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
-    "body-parser": "^1.20.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.0",
@@ -23,13 +22,10 @@
     "mongodb": "^6.8.0",
     "mongoose": "^8.6.3",
     "multer": "^1.4.5-lts.1",
-    "nginx": "^1.0.8",
     "nodemailer": "^6.9.15",
-    "nodemon": "^3.1.4",
-    "pdfjs-dist": "^2.10.335",
-    "react-router-dom": "^6.26.2"
+    "http-status-codes": "^2.3.0"
   },
   "devDependencies": {
-    "http-status-codes": "^2.3.0"
+    "nodemon": "^3.1.4"
   }
 }
