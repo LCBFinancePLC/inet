@@ -1,48 +1,58 @@
-import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import PdfComp from '../Components/pdfComp';
-import axios from 'axios';
+import { useState, useEffect, useRef } from 'react';
+import * as pdfjsLib from 'pdfjs-dist/build/pdf'; // ✅ CORRECT IMPORT
+import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry?url'; // ✅ WORKER IMPORT
 
-const PdfView = () => {
-  const { pdfPath } = useParams();
-  const decodedPath = decodeURIComponent(pdfPath);
-  const [pdfName, setPdfName] = useState('');
-  const [loading, setLoading] = useState(true);
+// Set worker path
+pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
+
+const PdfComp = ({ pdfFile, pdfName }) => {
+  const [numPages, setNumPages] = useState(null);
+  const [pageNumber, setPageNumber] = useState(1);
+  const canvasRef = useRef(null);
 
   useEffect(() => {
-    const fetchPdfDetails = async () => {
+    const loadPdf = async () => {
       try {
-        const response = await axios.get(`http://10.10.1.80:5000/api/pdfs/`, {
-          params: { path: decodedPath }
-        });
-        console.log('API Response:', response.data);
-
-        if (response.data && response.data.pdfName) {
-          setPdfName(response.data.pdfName);
-        } 
+        const loadingTask = pdfjsLib.getDocument(pdfFile);
+        const pdf = await loadingTask.promise;
+        setNumPages(pdf.numPages);
+        
+        // Render first page
+        const page = await pdf.getPage(1);
+        const viewport = page.getViewport({ scale: 1.5 });
+        const canvas = canvasRef.current;
+        const context = canvas.getContext('2d');
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+        
+        const renderContext = {
+          canvasContext: context,
+          viewport: viewport
+        };
+        page.render(renderContext);
       } catch (error) {
-        console.error('Error fetching PDF details:', error);
-        setPdfName('Error Loading PDF Name');
-      } finally {
-        setLoading(false);
+        console.error('Error loading PDF:', error);
       }
     };
 
-    fetchPdfDetails();
-  }, [decodedPath]);
+    loadPdf();
+  }, [pdfFile]);
 
   return (
-    <div className="pdf-viewer">
-      {loading ? (
-        <p>Loading...</p>
-      ) : (
-        <PdfComp 
-          pdfFile={`http://10.10.1.80:5000/${decodedPath}`} 
-          pdfName={pdfName}
-        />
-      )}
+    <div className="pdf-container">
+      <h3>{pdfName}</h3>
+      <canvas ref={canvasRef}></canvas>
+      <div>
+        <button disabled={pageNumber <= 1} onClick={() => setPageNumber(pageNumber - 1)}>
+          Previous
+        </button>
+        <span>Page {pageNumber} of {numPages}</span>
+        <button disabled={pageNumber >= numPages} onClick={() => setPageNumber(pageNumber + 1)}>
+          Next
+        </button>
+      </div>
     </div>
   );
 };
 
-export default PdfView;
+export default PdfComp;
