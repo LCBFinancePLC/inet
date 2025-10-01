@@ -10,38 +10,12 @@ const Tutorials = () => {
   const [searchQueries, setSearchQueries] = useState({});
 
   useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await axios.get(`http://10.10.1.80:5000/api/categories`);
-        setCategories(response.data);
-      } catch (error) {
-        console.error('Error fetching categories:', error);
-      }
-    };
-
-    const fetchPdfs = async () => {
-      try {
-        const response = await axios.get(`http://10.10.1.80:5000/api/pdfs`);
-        const filteredPdfs = response.data.filter(pdf => pdf.category === 'Tutorials' && pdf.pdfStatus === true);
-        setPdfs(filteredPdfs);
-      } catch (error) {
-        console.error('Error fetching PDFs:', error);
-      }
-    };
-
-
-    fetchCategories();
-    fetchPdfs();
-  }, []);
-
-
-  useEffect(() => {
     const fetchData = async () => {
       try {
         // Fetch categories and PDFs in parallel
         const [categoriesResponse, pdfsResponse] = await Promise.all([
-          axios.get('http://10.10.1.80:5000/api/categories'),
-          axios.get('http://10.10.1.80:5000/api/pdfs')
+          axios.get('https://intanet-b.onrender.com/api/categories'),
+          axios.get('https://intanet-b.onrender.com/api/pdfs')
         ]);
   
         const filteredPdfs = pdfsResponse.data.filter(
@@ -75,7 +49,7 @@ const Tutorials = () => {
   };
 
   const handlePdfClick = (filePath) => {
-    const fullPath = `http://10.10.1.80:5000/${filePath}`;
+    const fullPath = `https://intanet-b.onrender.com/${filePath}`;
     window.open(fullPath, '_blank');
   };
 
@@ -100,17 +74,17 @@ const Tutorials = () => {
         <main className="flex-1 p-12">
           <h1 className="text-3xl font-bold mb-6 text-gray-800">Tutorials</h1>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {categories.map(category => (
-  <CategoryCard 
-    key={category._id}          // Changed from category.id to category._id
-    category={category}
-    searchQuery={getSearchQueryForCategory(category._id)}
-    onSearchChange={handleSearchChange}
-    pdfs={pdfs.filter(pdf => pdf.subCategory === category.categoryName)}  // Filter PDFs per category
-    formatDate={formatDate}
-    handlePdfClick={handlePdfClick}
-  />
-))}
+            {categories.map(category => (
+              <CategoryCard 
+                key={category._id}
+                category={category}
+                searchQuery={getSearchQueryForCategory(category._id)}
+                onSearchChange={handleSearchChange}
+                pdfs={pdfs.filter(pdf => pdf.subCategory === category.categoryName)}
+                formatDate={formatDate}
+                handlePdfClick={handlePdfClick}
+              />
+            ))}
           </div>
         </main>
       </div>
